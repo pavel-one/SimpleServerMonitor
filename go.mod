@@ -1,4 +1,4 @@
-module sensors
+module github.com/pavel-one/sensors
 
 go 1.20
 
