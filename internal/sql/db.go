@@ -1,18 +1,19 @@
 package sql
 
 import (
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-type DB sqlx.DB
 
 var schema = `
 CREATE TABLE IF NOT EXISTS sensors (
     id integer
         constraint sensors_pk
             primary key,
-    name varchar not null
+    name varchar not null,
+    high_temp DECIMAL(2,2) not null,
+    crit_temp DECIMAL(2,2) not null
 );
 
 CREATE TABLE IF NOT EXISTS sensors_data (
@@ -22,13 +23,13 @@ CREATE TABLE IF NOT EXISTS sensors_data (
 );
 `
 
-func Connect() (*DB, error) {
-	db, err := sqlx.Connect("sqlite3", "./database.db")
+func Connect(dbname string) (*sqlx.DB, error) {
+	db, err := sqlx.Connect("sqlite3", fmt.Sprintf("./%s.sqlite3", dbname))
 	if err != nil {
 		return nil, err
 	}
 
 	db.MustExec(schema)
 
-	return (*DB)(db), nil
+	return db, nil
 }

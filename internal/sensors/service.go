@@ -1,11 +1,10 @@
 package sensors
 
 import (
-	"fmt"
 	"github.com/ssimunic/gosensors"
 )
 
-func GetSensors() []Chip {
+func GetChips() ([]Chip, error) {
 	sensors, err := gosensors.NewFromSystem()
 	out := make([]Chip, 0)
 
@@ -23,12 +22,10 @@ func GetSensors() []Chip {
 	}
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	fmt.Println(sensors)
-
-	return out
+	return out, nil
 }
 
 func getSensors(ent gosensors.Entries) []*Sensor {
