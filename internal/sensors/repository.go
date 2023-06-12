@@ -27,9 +27,12 @@ func NewSensorRepository(DB *sqlx.DB) *SensorRepository {
 	return &SensorRepository{DB: DB}
 }
 
+func (r *SensorRepository) AddTemp(sensor *Sensor) error {
+	return nil
+}
+
 func (r *SensorRepository) Find(id uint) (*Model, error) {
 	model := Model{}
-	var dataTemps []DataItem
 
 	if err := r.DB.Get(&model, "SELECT * FROM sensors WHERE id=$1 ORDER BY id DESC LIMIT 1", id); err != nil {
 		return nil, err
@@ -39,16 +42,22 @@ func (r *SensorRepository) Find(id uint) (*Model, error) {
 		return nil, errors.New("not found model")
 	}
 
-	err := r.DB.Select(&dataTemps, `
-		SELECT temp, created_at FROM sensors_data 
-            WHERE sensor_id=$1 
-            ORDER BY created_at DESC`, model.ID)
-
-	if err != nil {
-		return nil, err
-	}
-
-	model.Data = dataTemps
+	model.Data = r.getData(model.ID)
 
 	return &model, nil
+}
+
+func (r *SensorRepository) getData(sensorId uint) []DataItem {
+	var data []DataItem
+
+	err := r.DB.Select(&data, `
+		SELECT temp, created_at FROM sensors_data 
+            WHERE sensor_id=$1 
+            ORDER BY created_at DESC`, sensorId)
+
+	if err != nil {
+		return nil
+	}
+
+	return data
 }
