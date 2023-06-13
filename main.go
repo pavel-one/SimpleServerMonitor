@@ -1,22 +1,20 @@
 package main
 
 import (
-	"github.com/pavel-one/sensors/internal/sensors"
 	"github.com/pavel-one/sensors/internal/sql"
 	"log"
+	"time"
 )
 
 func main() {
-	db, err := sql.Connect("test")
+	db, err := sql.Connect("db")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	rep := sensors.NewSensorRepository(db)
-	find, err := rep.Find(1)
-	if err != nil {
+	app := NewApp(db)
+
+	if err := app.Run(time.Second * 5); err != nil {
 		log.Fatalln(err)
 	}
-
-	log.Println(find)
 }

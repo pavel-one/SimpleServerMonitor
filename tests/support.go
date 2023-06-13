@@ -22,3 +22,14 @@ func GetTestDB() *sqlx.DB {
 
 	return db
 }
+
+func GetEmptyTestDB() *sqlx.DB {
+	db, err := sql.Connect("test")
+	if err != nil {
+		return nil
+	}
+
+	db.Exec("DELETE FROM sensors;\nVACUUM;\nDELETE FROM sensors_data;\nVACUUM;")
+
+	return db
+}
