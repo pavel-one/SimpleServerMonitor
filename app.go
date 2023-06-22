@@ -1,26 +1,22 @@
 package main
 
 import (
-	"github.com/jmoiron/sqlx"
 	"github.com/pavel-one/sensors/internal/sensors"
+	"github.com/pavel-one/sensors/internal/sql"
 	"github.com/pavel-one/sensors/internal/ws"
 	"time"
 )
 
 type App struct {
-	DB      *sqlx.DB
-	Rep     *sensors.SensorRepository
 	ErrorCh chan error
 	Ws      *ws.Socket
 }
 
-func NewApp(DB *sqlx.DB) *App {
+func NewApp() *App {
 	w := ws.NewServer(5000, "Socket")
 	w.DefaultHandlers()
 
 	return &App{
-		DB:      DB,
-		Rep:     sensors.NewSensorRepository(DB),
 		ErrorCh: make(chan error, 1),
 		Ws:      w,
 	}
@@ -45,6 +41,12 @@ func (a *App) Run() error {
 
 // RunTemps Start sensor polling
 func (a *App) RunTemps(period time.Duration) error {
+	db, err := sql.Connect("db")
+	if err != nil {
+		return err
+	}
+	rep := sensors.NewSensorRepository(db)
+
 	log.Infoln("Run temps pulling")
 
 	for {
@@ -55,7 +57,7 @@ func (a *App) RunTemps(period time.Duration) error {
 
 		for _, chip := range chips {
 			for _, sens := range chip.Sensors {
-				if err := a.Rep.AddTemp(sens); err != nil {
+				if err := rep.AddTemp(sens); err != nil {
 					return err
 				}
 			}

@@ -109,6 +109,20 @@ func (r *SensorRepository) FindWithColumn(column string, value any) (*Model, err
 	return model, nil
 }
 
+func (r *SensorRepository) GetAll() ([]*Model, error) {
+	var models []*Model
+
+	if err := r.DB.Select(&models, "SELECT * FROM sensors ORDER BY name"); err != nil {
+		return nil, err
+	}
+
+	for _, item := range models {
+		item.Data = r.getData(item.ID)
+	}
+
+	return models, nil
+}
+
 // TODO: move to another repository
 func (r *SensorRepository) getData(sensorId uint) []DataItem {
 	var data []DataItem

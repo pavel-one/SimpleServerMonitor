@@ -110,3 +110,25 @@ func TestSensorRepository_AddTemp(t *testing.T) {
 		t.Fatal("count data records not correct")
 	}
 }
+
+func TestSensorRepository_GetAll(t *testing.T) {
+	db := tests.GetTestDB()
+	if db == nil {
+		t.Fatal("not init database")
+	}
+
+	rep := NewSensorRepository(db)
+
+	all, err := rep.GetAll()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(all) < 3 {
+		t.Fatal("not getting sensors")
+	}
+
+	if len(all[0].Data) < 3 {
+		t.Fatal("not getting sensors data")
+	}
+}

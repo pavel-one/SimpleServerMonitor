@@ -1,7 +1,10 @@
 package ws
 
 import (
+	"encoding/json"
 	"github.com/olahol/melody"
+	"github.com/pavel-one/sensors/internal/sensors"
+	"github.com/pavel-one/sensors/internal/ws/messagess"
 	"net/http"
 )
 
@@ -21,6 +24,28 @@ func (s *Socket) DefaultHandlers() {
 
 func (s *Socket) handleConnect(sess *melody.Session) {
 	s.Logger.Infoln("New Connection: ", sess.RemoteAddr())
+	rep := sensors.NewSensorRepository(s.db)
+
+	sens, err := rep.GetAll()
+	if err != nil {
+		s.Logger.Infoln("Error connection: ", err)
+		sess.Close()
+		return
+	}
+
+	msg := messagess.NewConnection(sens)
+	b, err := json.Marshal(msg)
+	if err != nil {
+		s.Logger.Infoln("Error connection: ", err)
+		sess.Close()
+		return
+	}
+
+	if err := sess.Write(b); err != nil {
+		s.Logger.Infoln("Error connection: ", err)
+		sess.Close()
+		return
+	}
 }
 
 func (s *Socket) handleDisconnect(sess *melody.Session) {
