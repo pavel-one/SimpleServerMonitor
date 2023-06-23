@@ -4,6 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/olahol/melody"
 	"github.com/pavel-one/sensors/internal/Logger"
+	"github.com/pavel-one/sensors/internal/events"
 	"github.com/pavel-one/sensors/internal/sql"
 	"go.uber.org/zap"
 	"net/http"
@@ -16,9 +17,10 @@ type Socket struct {
 	Port   int
 	Logger *zap.SugaredLogger
 	db     *sqlx.DB
+	events events.Chan
 }
 
-func NewServer(port int, serverName string) *Socket {
+func NewServer(port int, serverName string, ch events.Chan) *Socket {
 	m := melody.New()
 	h := http.NewServeMux()
 	logger := Logger.NewLogger(serverName)
@@ -28,6 +30,7 @@ func NewServer(port int, serverName string) *Socket {
 		Http:   h,
 		Port:   port,
 		Logger: logger,
+		events: ch,
 	}
 }
 

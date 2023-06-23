@@ -6,9 +6,10 @@ import (
 	"github.com/pavel-one/sensors/internal/sensors"
 	"github.com/pavel-one/sensors/internal/ws/messagess"
 	"net/http"
+	"time"
 )
 
-func (s *Socket) DefaultHandlers() {
+func (s *Socket) SetDefault() {
 	s.Http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if err := s.Server.HandleRequest(w, r); err != nil {
 			s.Logger.Errorln(err)
@@ -46,6 +47,17 @@ func (s *Socket) handleConnect(sess *melody.Session) {
 		sess.Close()
 		return
 	}
+
+	go func(sess *melody.Session) {
+		for true {
+			if sess.IsClosed() {
+				break
+			}
+
+			time.Sleep(time.Second)
+			s.Logger.Infoln("I wath")
+		}
+	}(sess)
 }
 
 func (s *Socket) handleDisconnect(sess *melody.Session) {
