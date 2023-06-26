@@ -29,7 +29,7 @@ func NewSensorRepository(DB *sqlx.DB) *SensorRepository {
 }
 
 // AddTemp create or find sensor and add temp
-func (r *SensorRepository) AddTemp(sensor *Sensor) error {
+func (r *SensorRepository) AddTemp(sensor *Sensor) (*Model, error) {
 	model, err := r.FindWithColumn("name", sensor.Name)
 
 	if err != nil {
@@ -41,7 +41,7 @@ func (r *SensorRepository) AddTemp(sensor *Sensor) error {
 
 		model, err = r.Create(model)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -51,12 +51,12 @@ func (r *SensorRepository) AddTemp(sensor *Sensor) error {
 
 	newData, err := r.addData(model.ID, sensor.Temp)
 	if err != nil {
-		return fmt.Errorf("error create data: %s", err)
+		return nil, fmt.Errorf("error create data: %s", err)
 	}
 
 	model.Data = append(model.Data, newData)
 
-	return nil
+	return model, nil
 }
 
 // Create save model to database

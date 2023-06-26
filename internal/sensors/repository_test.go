@@ -67,7 +67,7 @@ func TestSensorRepository_AddTemp(t *testing.T) {
 
 	rep := NewSensorRepository(db)
 
-	err := rep.AddTemp(&Sensor{
+	_, err := rep.AddTemp(&Sensor{
 		Name:     "test123",
 		Temp:     25.5,
 		HighTemp: 50,
@@ -87,7 +87,7 @@ func TestSensorRepository_AddTemp(t *testing.T) {
 	}
 
 	// add from exists record
-	err = rep.AddTemp(&Sensor{
+	_, err = rep.AddTemp(&Sensor{
 		Name:     "test123",
 		Temp:     26,
 		HighTemp: 50,
