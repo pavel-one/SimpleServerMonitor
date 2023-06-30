@@ -3,9 +3,9 @@ package ws
 import (
 	"github.com/jmoiron/sqlx"
 	"github.com/olahol/melody"
-	"github.com/pavel-one/sensors/internal/Logger"
-	"github.com/pavel-one/sensors/internal/events"
-	"github.com/pavel-one/sensors/internal/sql"
+	"github.com/pavel-one/SimpleServerMonitor/internal/Logger"
+	"github.com/pavel-one/SimpleServerMonitor/internal/events"
+	"github.com/pavel-one/SimpleServerMonitor/internal/sql"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"

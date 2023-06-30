@@ -3,8 +3,8 @@ package ws
 import (
 	"encoding/json"
 	"github.com/olahol/melody"
-	"github.com/pavel-one/sensors/internal/sensors"
-	"github.com/pavel-one/sensors/internal/ws/messagess"
+	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
+	"github.com/pavel-one/SimpleServerMonitor/internal/ws/messagess"
 	"net/http"
 	"time"
 )

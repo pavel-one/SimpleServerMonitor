@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/pavel-one/sensors/internal/events"
-	"github.com/pavel-one/sensors/internal/workers"
-	"github.com/pavel-one/sensors/internal/ws"
+	"github.com/pavel-one/SimpleServerMonitor/internal/events"
+	"github.com/pavel-one/SimpleServerMonitor/internal/workers"
+	"github.com/pavel-one/SimpleServerMonitor/internal/ws"
 	"time"
 )
 

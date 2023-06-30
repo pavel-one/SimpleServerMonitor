@@ -1,6 +1,6 @@
 package messagess
 
-import "github.com/pavel-one/sensors/internal/sensors"
+import "github.com/pavel-one/SimpleServerMonitor/internal/sensors"
 
 type Connection struct {
 	Message

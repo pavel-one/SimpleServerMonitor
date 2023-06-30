@@ -3,7 +3,7 @@ package tests
 import (
 	_ "embed"
 	"github.com/jmoiron/sqlx"
-	"github.com/pavel-one/sensors/internal/sql"
+	"github.com/pavel-one/SimpleServerMonitor/internal/sql"
 )
 
 //go:embed mocks/sensors.sql

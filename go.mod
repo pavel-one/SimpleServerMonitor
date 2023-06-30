@@ -1,4 +1,4 @@
-module github.com/pavel-one/sensors
+module github.com/pavel-one/SimpleServerMonitor
 
 go 1.20
 

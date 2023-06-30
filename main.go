@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/pavel-one/sensors/internal/Logger"
+	"github.com/pavel-one/SimpleServerMonitor/internal/Logger"
 )
 
 var log = Logger.NewLogger("Application")

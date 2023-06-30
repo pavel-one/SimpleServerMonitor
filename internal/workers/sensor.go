@@ -1,9 +1,9 @@
 package workers
 
 import (
-	"github.com/pavel-one/sensors/internal/Logger"
-	"github.com/pavel-one/sensors/internal/sensors"
-	"github.com/pavel-one/sensors/internal/sql"
+	"github.com/pavel-one/SimpleServerMonitor/internal/Logger"
+	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
+	"github.com/pavel-one/SimpleServerMonitor/internal/sql"
 	"time"
 )
 
@@ -26,7 +26,7 @@ func SensorWorker(period time.Duration) error {
 
 		for _, chip := range chips {
 			for _, sens := range chip.Sensors {
-				if err := rep.AddTemp(sens); err != nil {
+				if _, err := rep.AddTemp(sens); err != nil {
 					return err
 				}
 			}

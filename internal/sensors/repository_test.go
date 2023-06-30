@@ -1,7 +1,7 @@
 package sensors
 
 import (
-	"github.com/pavel-one/sensors/tests"
+	"github.com/pavel-one/SimpleServerMonitor/tests"
 	"testing"
 )
 
