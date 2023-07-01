@@ -2,12 +2,13 @@ package workers
 
 import (
 	"github.com/pavel-one/SimpleServerMonitor/internal/Logger"
+	"github.com/pavel-one/SimpleServerMonitor/internal/events"
 	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
 	"github.com/pavel-one/SimpleServerMonitor/internal/sql"
 	"time"
 )
 
-func SensorWorker(period time.Duration) error {
+func SensorWorker(period time.Duration, ch events.Chan) error {
 	log := Logger.NewLogger("SensorWorker")
 
 	db, err := sql.Connect("db")
@@ -26,9 +27,14 @@ func SensorWorker(period time.Duration) error {
 
 		for _, chip := range chips {
 			for _, sens := range chip.Sensors {
-				if _, err := rep.AddTemp(sens); err != nil {
+				model, err := rep.AddTemp(sens)
+				if err != nil {
 					return err
 				}
+
+				go func() {
+					ch <- events.NewTempEvent(model)
+				}()
 			}
 		}
 

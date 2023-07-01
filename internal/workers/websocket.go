@@ -1,23 +1,40 @@
 package workers
 
 import (
+	"github.com/goccy/go-json"
 	"github.com/olahol/melody"
-	"github.com/pavel-one/SimpleServerMonitor/internal/Logger"
 	"github.com/pavel-one/SimpleServerMonitor/internal/events"
-	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
-	"github.com/pavel-one/SimpleServerMonitor/internal/sql"
 )
 
-func WebsocketWorker(sess melody.Session, ch events.Chan) error {
-	log := Logger.NewLogger("WsWorker")
-	db, err := sql.Connect("db")
-	if err != nil {
-		return err
-	}
-	rep := sensors.NewSensorRepository(db)
-	log.Infoln("Run user ws pulling", sess.RemoteAddr())
+type message struct {
+	Event string `json:"event"`
+	Data  any    `json:"data"`
+}
 
-	for i := range ch {
+func WebsocketWorker(server *melody.Melody, ch events.Chan) error {
+	for event := range ch {
+		msg := message{
+			Event: event.GetEvent(),
+			Data:  event.GetData(),
+		}
+
+		b, err := json.Marshal(msg)
+		if err != nil {
+			return err
+		}
+
+		err = server.BroadcastFilter(b, func(session *melody.Session) bool {
+			if session.IsClosed() {
+				return false
+			}
+
+			return true
+		})
+		if err != nil {
+			return err
+		}
 
 	}
+
+	return nil
 }

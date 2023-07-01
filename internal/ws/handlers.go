@@ -1,12 +1,11 @@
 package ws
 
 import (
-	"encoding/json"
+	"github.com/goccy/go-json"
 	"github.com/olahol/melody"
+	"github.com/pavel-one/SimpleServerMonitor/internal/events"
 	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
-	"github.com/pavel-one/SimpleServerMonitor/internal/ws/messagess"
 	"net/http"
-	"time"
 )
 
 func (s *Socket) SetDefault() {
@@ -30,34 +29,34 @@ func (s *Socket) handleConnect(sess *melody.Session) {
 	sens, err := rep.GetAll()
 	if err != nil {
 		s.Logger.Infoln("Error connection: ", err)
-		sess.Close()
+		if err := sess.Close(); err != nil {
+			s.Logger.Errorln("Error session close: ", err)
+			return
+		}
 		return
 	}
 
-	msg := messagess.NewConnection(sens)
+	msg := events.NewTempAll(sens)
 	b, err := json.Marshal(msg)
 	if err != nil {
 		s.Logger.Infoln("Error connection: ", err)
-		sess.Close()
+		if err := sess.Close(); err != nil {
+			s.Logger.Errorln("Error session close: ", err)
+			return
+		}
 		return
 	}
 
 	if err := sess.Write(b); err != nil {
 		s.Logger.Infoln("Error connection: ", err)
-		sess.Close()
+
+		if err := sess.Close(); err != nil {
+			s.Logger.Errorln("Error session close: ", err)
+			return
+		}
 		return
 	}
 
-	go func(sess *melody.Session) {
-		for true {
-			if sess.IsClosed() {
-				break
-			}
-
-			time.Sleep(time.Second)
-			s.Logger.Infoln("I wath")
-		}
-	}(sess)
 }
 
 func (s *Socket) handleDisconnect(sess *melody.Session) {

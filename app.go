@@ -14,7 +14,7 @@ type App struct {
 }
 
 func NewApp() *App {
-	ech := make(events.Chan)
+	ech := make(events.Chan, 1)
 
 	w := ws.NewServer(5000, "Socket", ech)
 	w.SetDefault()
@@ -29,13 +29,22 @@ func NewApp() *App {
 // Run all application components
 func (a *App) Run() error {
 	go func(ch chan<- error) {
-		if err := workers.SensorWorker(time.Second * 5); err != nil {
+		if err := workers.SensorWorker(time.Second*5, a.EventCh); err != nil {
+			log.Errorln("Sensor worker is failed", err)
 			ch <- err
 		}
 	}(a.ErrorCh)
 
 	go func(ch chan<- error) {
 		if err := a.Ws.Run(); err != nil {
+			log.Errorln("Websocket server is failed", err)
+			ch <- err
+		}
+	}(a.ErrorCh)
+
+	go func(ch chan<- error) {
+		if err := workers.WebsocketWorker(a.Ws.Server, a.EventCh); err != nil {
+			log.Errorln("Sensor worker is failed", err)
 			ch <- err
 		}
 	}(a.ErrorCh)
