@@ -1,6 +1,8 @@
 package sensors
 
-import "errors"
+import (
+	"errors"
+)
 
 type Sensor struct {
 	Name     string  `json:"name"`
