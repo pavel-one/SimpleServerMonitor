@@ -36,7 +36,7 @@ func (r *ChartSensorsRepository) BySeconds() (*Chart, error) {
 
 	q := `
 SELECT created_at AS time,
-       AVG(temp) AS temp, 
+       round(AVG(temp), 2) AS temp, 
        name,
        sensor_id
 FROM sensors_data
@@ -57,8 +57,8 @@ func (r *ChartSensorsRepository) ByMinutes() (*Chart, error) {
 	var models []*sqlModel
 
 	q := `
-SELECT created_at AS time,
-       AVG(temp) AS temp, 
+SELECT strftime('%Y-%m-%d %H:%M:00', created_at) AS time,
+       round(AVG(temp), 2) AS temp, 
        name,
        sensor_id
 FROM sensors_data
@@ -79,8 +79,8 @@ func (r *ChartSensorsRepository) ByHours() (*Chart, error) {
 	var models []*sqlModel
 
 	q := `
-SELECT created_at AS time,
-       AVG(temp) AS temp, 
+SELECT strftime('%Y-%m-%d %H:00:00', created_at) AS time,
+       round(AVG(temp), 2) AS temp, 
        name,
        sensor_id
 FROM sensors_data
@@ -101,8 +101,8 @@ func (r *ChartSensorsRepository) ByDays() (*Chart, error) {
 	var models []*sqlModel
 
 	q := `
-SELECT created_at AS time,
-       AVG(temp) AS temp, 
+SELECT strftime('%Y-%m-%d 00:00:00', created_at) AS time,
+       round(AVG(temp), 2) AS temp, 
        name,
        sensor_id
 FROM sensors_data
@@ -123,8 +123,8 @@ func (r *ChartSensorsRepository) ByMonth() (*Chart, error) {
 	var models []*sqlModel
 
 	q := `
-SELECT created_at AS time,
-       AVG(temp) AS temp, 
+SELECT strftime('%Y-%m-01 00:00:00', created_at) AS time,
+       round(AVG(temp), 2) AS temp, 
        name,
        sensor_id
 FROM sensors_data
