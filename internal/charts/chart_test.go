@@ -17,8 +17,9 @@ func getRepository(time string) (*Repository, error) {
 
 	q := fmt.Sprintf(`
 BEGIN TRANSACTION;
-INSERT INTO sensors (id, name, high_temp, crit_temp) VALUES (1, 'test', 80, 120);
-INSERT INTO sensors (id, name, high_temp, crit_temp) VALUES (2, 'test1', 80, 120);
+INSERT INTO chips (id, name) VALUES (1, 'TestChip');
+INSERT INTO sensors (id, name, high_temp, crit_temp, chip_id) VALUES (1, 'test', 80, 120, 1);
+INSERT INTO sensors (id, name, high_temp, crit_temp, chip_id) VALUES (2, 'test1', 80, 120, 1);
 INSERT INTO sensors_data (temp, sensor_id, created_at) VALUES (20.00, 1, datetime('now', '-1 %[1]s'));
 INSERT INTO sensors_data (temp, sensor_id, created_at) VALUES (21.00, 1, datetime('now', '-2 %[1]s'));
 INSERT INTO sensors_data (temp, sensor_id, created_at) VALUES (22.00, 1, datetime('now', '-3 %[1]s'));
