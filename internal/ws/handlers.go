@@ -3,8 +3,8 @@ package ws
 import (
 	"github.com/goccy/go-json"
 	"github.com/olahol/melody"
+	"github.com/pavel-one/SimpleServerMonitor/internal/charts"
 	"github.com/pavel-one/SimpleServerMonitor/internal/events"
-	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
 	"net/http"
 )
 
@@ -24,9 +24,9 @@ func (s *Socket) SetDefault() {
 
 func (s *Socket) handleConnect(sess *melody.Session) {
 	s.Logger.Infoln("New Connection: ", sess.RemoteAddr())
-	rep := sensors.NewSensorRepository(s.db)
+	rep := charts.NewRepository(s.db)
 
-	sens, err := rep.GetAll()
+	chart, err := rep.BySeconds()
 	if err != nil {
 		s.Logger.Infoln("Error connection: ", err)
 		if err := sess.Close(); err != nil {
@@ -36,7 +36,7 @@ func (s *Socket) handleConnect(sess *melody.Session) {
 		return
 	}
 
-	msg := events.NewTempAll(sens)
+	msg := events.NewChartFull(chart)
 	b, err := json.Marshal(msg)
 	if err != nil {
 		s.Logger.Infoln("Error connection: ", err)

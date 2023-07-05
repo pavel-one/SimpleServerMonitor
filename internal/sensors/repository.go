@@ -7,19 +7,6 @@ import (
 	"time"
 )
 
-type DataItem struct {
-	Temp      float32   `json:"temp" db:"temp"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
-}
-
-type Model struct {
-	ID       uint       `json:"id" db:"id"`
-	Name     string     `json:"name" db:"name"`
-	HighTemp float32    `json:"high_temp" db:"high_temp"`
-	CritTemp float32    `json:"crit_temp" db:"crit_temp"`
-	Data     []DataItem `json:"data" db:"-"`
-}
-
 type SensorRepository struct {
 	DB *sqlx.DB
 }
@@ -29,7 +16,21 @@ func NewSensorRepository(DB *sqlx.DB) *SensorRepository {
 }
 
 // AddTemp create or find sensor and add temp
-func (r *SensorRepository) AddTemp(sensor *Sensor) (*Model, error) {
+func (r *SensorRepository) AddTemp(sensor *Sensor, chipName string) (*Model, error) {
+	chipModel := new(ChipModel)
+
+	if err := r.DB.Get(chipModel, "SELECT id, name FROM chips WHERE name=$1", chipName); err != nil {
+		_, err = r.DB.Exec("INSERT INTO chips (name) VALUES ($1)", chipName)
+		if err != nil {
+			return nil, err
+		}
+
+		err = r.DB.Get(chipModel, "SELECT id, name FROM chips WHERE name=$1", chipName)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	model, err := r.FindWithColumn("name", sensor.Name)
 
 	if err != nil {
@@ -37,6 +38,7 @@ func (r *SensorRepository) AddTemp(sensor *Sensor) (*Model, error) {
 			Name:     sensor.Name,
 			HighTemp: sensor.HighTemp,
 			CritTemp: sensor.CritTemp,
+			ChipId:   chipModel.ID,
 		}
 
 		model, err = r.Create(model)
@@ -61,7 +63,7 @@ func (r *SensorRepository) AddTemp(sensor *Sensor) (*Model, error) {
 
 // Create save model to database
 func (r *SensorRepository) Create(model *Model) (*Model, error) {
-	_, err := r.DB.NamedExec("INSERT INTO sensors (name, high_temp, crit_temp) VALUES (:name, :high_temp, :crit_temp)", model)
+	_, err := r.DB.NamedExec("INSERT INTO sensors (name, high_temp, crit_temp, chip_id) VALUES (:name, :high_temp, :crit_temp, :chip_id)", model)
 	if err != nil {
 		return nil, fmt.Errorf("error insert: %s", err)
 	}

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import {CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip} from 'chart.js'
+import {CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip, Colors} from 'chart.js'
 import {Line} from 'vue-chartjs'
 
 ChartJS.register(
@@ -13,7 +13,8 @@ ChartJS.register(
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    Colors
 )
 
 export default {
@@ -27,55 +28,8 @@ export default {
   },
   data() {
     return {
-      //     data: {
-      //       labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      //       datasets: [
-      //         {
-      //           label: 'Data One',
-      //           backgroundColor: '#f87979',
-      //           data: [40, 39, 10, 40, 39, 80, 40]
-      //         },
-      //         {
-      //           label: 'Data two',
-      //           backgroundColor: 'blue',
-      //           data: [35, 11, 10, 40, 39, 80, 40]
-      //         }
-      //       ]
-      //     },
       options: {
-        responsive: true,
-        // maintainAspectRatio: false,
-        // animations: {
-        //   tension: {
-        //     duration: 1000,
-        //     easing: 'linear',
-        //     from: 1,
-        //     to: 0,
-        //     loop: true
-        //   }
-        // },
-        transitions: {
-          show: {
-            animations: {
-              x: {
-                from: 0
-              },
-              y: {
-                from: 0
-              }
-            }
-          },
-          hide: {
-            animations: {
-              x: {
-                to: 0
-              },
-              y: {
-                to: 0
-              }
-            }
-          }
-        }
+        responsive: true
       }
     }
   }

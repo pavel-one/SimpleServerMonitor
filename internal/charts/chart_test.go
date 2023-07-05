@@ -1,4 +1,4 @@
-package sensors
+package charts
 
 import (
 	"errors"
@@ -7,13 +7,13 @@ import (
 	"testing"
 )
 
-func getRepository(time string) (*ChartSensorsRepository, error) {
+func getRepository(time string) (*Repository, error) {
 	db := tests.GetEmptyTestDB()
 	if db == nil {
 		return nil, errors.New("not getting db")
 	}
 
-	rep := NewChartSensorsRepository(db)
+	rep := NewRepository(db)
 
 	q := fmt.Sprintf(`
 BEGIN TRANSACTION;

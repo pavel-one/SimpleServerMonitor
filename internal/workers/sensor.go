@@ -27,7 +27,7 @@ func SensorWorker(period time.Duration, ch events.Chan) error {
 
 		for _, chip := range chips {
 			for _, sens := range chip.Sensors {
-				model, err := rep.AddTemp(sens)
+				model, err := rep.AddTemp(sens, chip.Name)
 				if err != nil {
 					return err
 				}

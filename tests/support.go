@@ -29,7 +29,10 @@ func GetEmptyTestDB() *sqlx.DB {
 		return nil
 	}
 
-	db.Exec("DELETE FROM sensors;\nVACUUM;\nDELETE FROM sensors_data;\nVACUUM;")
+	_, err = db.Exec("DELETE FROM chips;\nVACUUM;\nDELETE FROM sensors;\nVACUUM;\nDELETE FROM sensors_data;\nVACUUM;")
+	if err != nil {
+		return nil
+	}
 
 	return db
 }

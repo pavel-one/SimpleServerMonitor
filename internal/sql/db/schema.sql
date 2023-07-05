@@ -1,3 +1,11 @@
+CREATE TABLE IF NOT EXISTS chips
+(
+    id   integer
+        constraint chips_pk
+            primary key,
+    name varchar not null
+);
+
 CREATE TABLE IF NOT EXISTS sensors
 (
     id        integer
@@ -5,7 +13,9 @@ CREATE TABLE IF NOT EXISTS sensors
             primary key,
     name      varchar       not null,
     high_temp DECIMAL(3, 2) not null,
-    crit_temp DECIMAL(3, 2) not null
+    crit_temp DECIMAL(3, 2) not null,
+    chip_id integer,
+    FOREIGN KEY (chip_id) REFERENCES chips (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS sensors_data

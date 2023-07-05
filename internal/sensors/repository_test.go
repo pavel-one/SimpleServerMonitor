@@ -72,7 +72,7 @@ func TestSensorRepository_AddTemp(t *testing.T) {
 		Temp:     25.5,
 		HighTemp: 50,
 		CritTemp: 110,
-	})
+	}, "TestChip")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,7 +92,7 @@ func TestSensorRepository_AddTemp(t *testing.T) {
 		Temp:     26,
 		HighTemp: 50,
 		CritTemp: 110,
-	})
+	}, "TestChip")
 	if err != nil {
 		t.Fatal(err)
 	}
