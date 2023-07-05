@@ -6,10 +6,10 @@ import (
 )
 
 type sqlModel struct {
-	Time     time.Time `db:"time"`
-	Temp     float32   `db:"temp"`
-	Name     string    `db:"name"`
-	SensorId uint      `db:"sensor_id"`
+	Time     string  `db:"time"`
+	Temp     float32 `db:"temp"`
+	Name     string  `db:"name"`
+	SensorId uint    `db:"sensor_id"`
 }
 
 type dataset struct {
@@ -35,7 +35,7 @@ func (r *ChartSensorsRepository) BySeconds() (*Chart, error) {
 	var models []*sqlModel
 
 	q := `
-SELECT created_at AS time,
+SELECT strftime('%Y-%m-%d %H:%M:%S', created_at) AS time,
        round(AVG(temp), 2) AS temp, 
        name,
        sensor_id
@@ -148,6 +148,11 @@ func (r *ChartSensorsRepository) ModelsToChart(models []*sqlModel, timeLayout st
 	var datasets []*dataset
 
 	for _, m := range models {
+		t, err := time.Parse("2006-01-02 15:04:05", m.Time)
+		if err != nil {
+			continue
+		}
+
 		v, ok := mapper[m.SensorId]
 		if ok {
 			v.Data = append(v.Data, m.Temp)
@@ -159,9 +164,9 @@ func (r *ChartSensorsRepository) ModelsToChart(models []*sqlModel, timeLayout st
 			}
 		}
 
-		_, ok = mapperTimes[m.Time]
+		_, ok = mapperTimes[t]
 		if !ok {
-			mapperTimes[m.Time] = true
+			mapperTimes[t] = true
 		}
 	}
 
