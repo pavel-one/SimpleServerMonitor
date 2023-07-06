@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"github.com/pavel-one/SimpleServerMonitor/internal/charts"
 	"github.com/pavel-one/SimpleServerMonitor/internal/events"
 	"github.com/pavel-one/SimpleServerMonitor/internal/logger"
 	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
@@ -17,6 +18,7 @@ func SensorWorker(period time.Duration, ch events.Chan) error {
 		return err
 	}
 	rep := sensors.NewSensorRepository(db)
+	chartRep := charts.NewRepository(db)
 
 	log.Infoln("Run temps pulling")
 
@@ -28,13 +30,18 @@ func SensorWorker(period time.Duration, ch events.Chan) error {
 
 		for _, chip := range chips {
 			for _, sens := range chip.Sensors {
-				model, err := rep.AddTemp(sens, chip.Name)
-				if err != nil {
+				if _, err := rep.AddTemp(sens, chip.Name); err != nil {
 					return err
 				}
 
 				go func() {
-					ch <- events.NewTempEvent(model)
+					last, err := chartRep.GetLast(charts.TypeSecond)
+					if err != nil {
+						log.Errorln("Error load last charts:", err)
+						return
+					}
+
+					ch <- events.NewChart(last, events.AddTempEvent)
 				}()
 			}
 		}

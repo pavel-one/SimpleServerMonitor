@@ -37,7 +37,7 @@ func (s *Socket) handleConnect(sess *melody.Session) {
 		return
 	}
 
-	msg := events.NewChartFull(chart)
+	msg := events.NewChart(chart, events.LoadTempEvent)
 	b, err := json.Marshal(msg)
 	if err != nil {
 		s.Logger.Infoln("Error connection: ", err)
