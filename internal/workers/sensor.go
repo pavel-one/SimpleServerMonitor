@@ -33,19 +33,18 @@ func SensorWorker(period time.Duration, ch events.Chan) error {
 				if _, err := rep.AddTemp(sens, chip.Name); err != nil {
 					return err
 				}
-
-				go func() {
-					last, err := chartRep.GetLast(charts.TypeSecond)
-					if err != nil {
-						log.Errorln("Error load last charts:", err)
-						return
-					}
-
-					ch <- events.NewChart(last, events.AddTempEvent)
-				}()
 			}
 		}
 
+		go func() {
+			last, err := chartRep.GetLast(charts.TypeSecond)
+			if err != nil {
+				log.Errorln("Error load last charts:", err)
+				return
+			}
+
+			ch <- events.NewChart(last, events.AddTempEvent)
+		}()
 		time.Sleep(period)
 	}
 }

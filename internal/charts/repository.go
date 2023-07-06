@@ -128,7 +128,7 @@ func (r *Repository) GetLast(typ string) (*Chart, error) {
 		layout = secondLayout
 	}
 
-	pQuery := r.getQuery("%Y-%m-01 00:00:00", offset, "DESC")
+	pQuery := r.getQuery("%Y-%m-%d %H:%M:%S", offset, "DESC")
 	q := fmt.Sprintf("SELECT * FROM (%s) GROUP BY sensor_id", pQuery)
 
 	if err := r.DB.Select(&models, q); err != nil {

@@ -30,9 +30,29 @@ export default {
         this.temps = json.data
       }
 
+      if (e.channel === 'temp' && e.name === 'add') {
+        // console.log(this.temps)
+        console.log("added", json.data)
+
+        // this.temps.labels.push(json.data.labels[0])
+      }
+
       // console.log("event:", e, json)
       // console.log('app:', json)
     }
+
+    setTimeout(() => {
+      this.temps = {
+        labels: [ 'January', 'February', 'March'],
+        datasets: [
+          {
+            label: 'Data One',
+            backgroundColor: '#f87979',
+            data: [40, 20, 12]
+          }
+        ]
+      }
+    }, 5000)
   }
 }
 </script>
