@@ -4,6 +4,7 @@ import (
 	"errors"
 )
 
+// Sensor struct
 type Sensor struct {
 	Name     string  `json:"name"`
 	Temp     float32 `json:"temp"`
@@ -12,6 +13,7 @@ type Sensor struct {
 	RawData  string  `json:"raw_data"`
 }
 
+// NewSensor create sensor structure from string
 func NewSensor(name string, rawData string) (*Sensor, error) {
 	if !StrHasTemp(rawData) {
 		return nil, errors.New("sensor raw data not has temp")
@@ -27,11 +29,9 @@ func NewSensor(name string, rawData string) (*Sensor, error) {
 	switch len(temps) {
 	case 1:
 		sensor.Temp = temps[0]
-		break
 	case 2:
 		sensor.Temp = temps[0]
 		sensor.CritTemp = temps[1]
-		break
 	case 3:
 		sensor.Temp = temps[0]
 		sensor.HighTemp = temps[1]
@@ -41,6 +41,7 @@ func NewSensor(name string, rawData string) (*Sensor, error) {
 	return sensor, nil
 }
 
+// Chip structure
 type Chip struct {
 	Name    string    `json:"name"`
 	Sensors []*Sensor `json:"sensors"`

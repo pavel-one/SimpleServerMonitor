@@ -7,12 +7,14 @@ import (
 	"time"
 )
 
+// App application wrapper for run worker and services
 type App struct {
 	ErrorCh chan error
 	EventCh events.Chan
 	Ws      *ws.Socket
 }
 
+// NewApp create new application
 func NewApp() *App {
 	ech := make(events.Chan, 1)
 

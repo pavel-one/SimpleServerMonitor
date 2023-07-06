@@ -4,6 +4,7 @@ import (
 	"github.com/ssimunic/gosensors"
 )
 
+// GetChips getting all chips
 func GetChips() ([]Chip, error) {
 	sensors, err := gosensors.NewFromSystem()
 	out := make([]Chip, 0)

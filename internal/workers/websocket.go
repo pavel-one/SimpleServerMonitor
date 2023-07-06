@@ -11,6 +11,7 @@ type message struct {
 	Data  any    `json:"data"`
 }
 
+// WebsocketWorker worker from work websocket's
 func WebsocketWorker(server *melody.Melody, ch events.Chan) error {
 	for event := range ch {
 		msg := message{
@@ -24,11 +25,7 @@ func WebsocketWorker(server *melody.Melody, ch events.Chan) error {
 		}
 
 		err = server.BroadcastFilter(b, func(session *melody.Session) bool {
-			if session.IsClosed() {
-				return false
-			}
-
-			return true
+			return !session.IsClosed()
 		})
 		if err != nil {
 			return err

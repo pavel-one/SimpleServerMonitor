@@ -5,10 +5,12 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Repository chart database
 type Repository struct {
 	DB *sqlx.DB
 }
 
+// NewRepository create new repository
 func NewRepository(DB *sqlx.DB) *Repository {
 	return &Repository{DB: DB}
 }
@@ -30,6 +32,7 @@ ORDER BY time;
 	return fmt.Sprintf(q, timeFormat, timeOffset)
 }
 
+// BySeconds getting chart for last 1 minute
 func (r *Repository) BySeconds() (*Chart, error) {
 	var models []*Model
 
@@ -39,9 +42,10 @@ func (r *Repository) BySeconds() (*Chart, error) {
 		return nil, err
 	}
 
-	return ModelsToChart(models, "15:04:05"), nil
+	return mapToChart(models, "15:04:05"), nil
 }
 
+// ByMinutes getting chart for last 1 hour
 func (r *Repository) ByMinutes() (*Chart, error) {
 	var models []*Model
 
@@ -51,9 +55,10 @@ func (r *Repository) ByMinutes() (*Chart, error) {
 		return nil, err
 	}
 
-	return ModelsToChart(models, "15:04"), nil
+	return mapToChart(models, "15:04"), nil
 }
 
+// ByHours getting chart for last 1 day
 func (r *Repository) ByHours() (*Chart, error) {
 	var models []*Model
 
@@ -63,9 +68,10 @@ func (r *Repository) ByHours() (*Chart, error) {
 		return nil, err
 	}
 
-	return ModelsToChart(models, "2006-01-02 15:00"), nil
+	return mapToChart(models, "2006-01-02 15:00"), nil
 }
 
+// ByDays getting chart for last 1 month
 func (r *Repository) ByDays() (*Chart, error) {
 	var models []*Model
 
@@ -75,9 +81,10 @@ func (r *Repository) ByDays() (*Chart, error) {
 		return nil, err
 	}
 
-	return ModelsToChart(models, "2006-01-02"), nil
+	return mapToChart(models, "2006-01-02"), nil
 }
 
+// ByMonth getting chart for last 1 year
 func (r *Repository) ByMonth() (*Chart, error) {
 	var models []*Model
 
@@ -87,5 +94,5 @@ func (r *Repository) ByMonth() (*Chart, error) {
 		return nil, err
 	}
 
-	return ModelsToChart(models, "2006-01-02"), nil
+	return mapToChart(models, "2006-01-02"), nil
 }

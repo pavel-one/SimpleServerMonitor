@@ -1,15 +1,16 @@
 package workers
 
 import (
-	"github.com/pavel-one/SimpleServerMonitor/internal/Logger"
 	"github.com/pavel-one/SimpleServerMonitor/internal/events"
+	"github.com/pavel-one/SimpleServerMonitor/internal/logger"
 	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
 	"github.com/pavel-one/SimpleServerMonitor/internal/sql"
 	"time"
 )
 
+// SensorWorker worker for writing sensor data
 func SensorWorker(period time.Duration, ch events.Chan) error {
-	log := Logger.NewLogger("SensorWorker")
+	log := logger.NewLogger("SensorWorker")
 
 	db, err := sql.Connect("db")
 	if err != nil {

@@ -1,4 +1,4 @@
-package Logger
+package logger
 
 import (
 	"go.uber.org/zap"
@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// NewLogger create new logger with channel
 func NewLogger(channel string) *zap.SugaredLogger {
 	cfg := zap.NewProductionConfig()
 	cfg.Level = getLevel()

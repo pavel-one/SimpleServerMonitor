@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/pavel-one/SimpleServerMonitor/internal/Logger"
+	"github.com/pavel-one/SimpleServerMonitor/internal/logger"
 )
 
-var log = Logger.NewLogger("Application")
+var log = logger.NewLogger("Application")
 
 func main() {
 	app := NewApp()

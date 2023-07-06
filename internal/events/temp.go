@@ -10,11 +10,13 @@ type tempData struct {
 	Temp float32 `json:"temp"`
 }
 
+// Temp event structure
 type Temp struct {
 	Event string
 	Data  tempData
 }
 
+// NewTempEvent create temp event
 func NewTempEvent(model *sensors.Model) *Temp {
 	data := tempData{
 		ID:   model.ID,
@@ -28,10 +30,12 @@ func NewTempEvent(model *sensors.Model) *Temp {
 	}
 }
 
+// GetEvent getting event name
 func (e *Temp) GetEvent() string {
 	return e.Event
 }
 
+// GetData getting data
 func (e *Temp) GetData() any {
 	return e.Data
 }

@@ -7,10 +7,12 @@ import (
 	"time"
 )
 
+// SensorRepository repository for work with sensor data
 type SensorRepository struct {
 	DB *sqlx.DB
 }
 
+// NewSensorRepository create new repository
 func NewSensorRepository(DB *sqlx.DB) *SensorRepository {
 	return &SensorRepository{DB: DB}
 }
@@ -38,7 +40,7 @@ func (r *SensorRepository) AddTemp(sensor *Sensor, chipName string) (*Model, err
 			Name:     sensor.Name,
 			HighTemp: sensor.HighTemp,
 			CritTemp: sensor.CritTemp,
-			ChipId:   chipModel.ID,
+			ChipID:   chipModel.ID,
 		}
 
 		model, err = r.Create(model)
@@ -48,7 +50,7 @@ func (r *SensorRepository) AddTemp(sensor *Sensor, chipName string) (*Model, err
 	}
 
 	if model.Data == nil {
-		model.Data = []DataItem{}
+		model.Data = []dataItem{}
 	}
 
 	newData, err := r.addData(model.ID, sensor.Temp)
@@ -111,6 +113,7 @@ func (r *SensorRepository) FindWithColumn(column string, value any) (*Model, err
 	return model, nil
 }
 
+// GetAll getting all sensors
 func (r *SensorRepository) GetAll() ([]*Model, error) {
 	var models []*Model
 
@@ -126,13 +129,13 @@ func (r *SensorRepository) GetAll() ([]*Model, error) {
 }
 
 // TODO: move to another repository
-func (r *SensorRepository) getData(sensorId uint) []DataItem {
-	var data []DataItem
+func (r *SensorRepository) getData(sensorID uint) []dataItem {
+	var data []dataItem
 
 	err := r.DB.Select(&data, `
 		SELECT temp, created_at FROM sensors_data 
             WHERE sensor_id=$1 
-            ORDER BY created_at DESC`, sensorId)
+            ORDER BY created_at DESC`, sensorID)
 
 	if err != nil {
 		return nil
@@ -142,13 +145,13 @@ func (r *SensorRepository) getData(sensorId uint) []DataItem {
 }
 
 // TODO: move to another repository
-func (r *SensorRepository) addData(sensorId uint, temp float32) (DataItem, error) {
-	item := DataItem{
+func (r *SensorRepository) addData(sensorID uint, temp float32) (dataItem, error) {
+	item := dataItem{
 		Temp:      temp,
 		CreatedAt: time.Now(),
 	}
 
-	_, err := r.DB.Exec("INSERT INTO sensors_data (temp, sensor_id) VALUES ($1, $2)", item.Temp, sensorId)
+	_, err := r.DB.Exec("INSERT INTO sensors_data (temp, sensor_id) VALUES ($1, $2)", item.Temp, sensorID)
 	if err != nil {
 		return item, err
 	}

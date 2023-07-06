@@ -8,8 +8,9 @@ import (
 	"net/http"
 )
 
+// SetDefault handlers methods
 func (s *Socket) SetDefault() {
-	s.Http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	s.Mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if err := s.Server.HandleRequest(w, r); err != nil {
 			s.Logger.Errorln(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)

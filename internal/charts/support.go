@@ -2,7 +2,7 @@ package charts
 
 import "time"
 
-func ModelsToChart(models []*Model, timeLayout string) *Chart {
+func mapToChart(models []*Model, timeLayout string) *Chart {
 	mapper := make(map[uint]*dataset)
 	mapperTimes := make(map[time.Time]bool)
 	var labels []string
@@ -14,13 +14,13 @@ func ModelsToChart(models []*Model, timeLayout string) *Chart {
 			continue
 		}
 
-		v, ok := mapper[m.SensorId]
+		v, ok := mapper[m.SensorID]
 		if ok {
 			v.Data = append(v.Data, m.Temp)
 		} else {
-			mapper[m.SensorId] = &dataset{
+			mapper[m.SensorID] = &dataset{
 				Label:    m.Name,
-				SensorId: m.SensorId,
+				SensorID: m.SensorID,
 				Data:     []float32{m.Temp},
 			}
 		}
