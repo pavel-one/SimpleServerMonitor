@@ -24,7 +24,7 @@ SELECT strftime('%s', created_at) AS time,
 FROM sensors_data
          INNER JOIN sensors s on s.id = sensors_data.sensor_id
          INNER JOIN chips c on c.id = s.chip_id
-WHERE created_at >= datetime('now', '%s')
+WHERE created_at >= datetime('now', 'localtime', '%s')
 GROUP BY time, sensor_id
 ORDER BY time %s
 `
