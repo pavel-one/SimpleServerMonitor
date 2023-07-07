@@ -1,7 +1,7 @@
 <template>
   <div>
     <logo />
-    <Line ref="chart" style="width: 1000px; height: 400px" v-if="temps" :data="temps" :options="options"/>
+    <VueApexCharts width="500" type="line" :options="options" :series="series"></VueApexCharts>
   </div>
 </template>
 
@@ -10,31 +10,28 @@ import Logo from './components/Logo.vue'
 import store from "./store/store.js";
 import {helpers} from "./support/helpers.js";
 
-import {CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip, Colors} from 'chart.js'
-import {Line} from "vue-chartjs";
-
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Colors
-)
+import VueApexCharts from "vue3-apexcharts";
 
 export default {
   components: {
-    Line,
-    Logo
+    Logo,
+    VueApexCharts
   },
   data() {
     return {
       temps: null,
       options: {
-        responsive: true
-      }
+        chart: {
+          id: 'vuechart-example'
+        },
+        xaxis: {
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+        }
+      },
+      series: [{
+        name: 'series-1',
+        data: [30, 40, 45, 50, 49, 60, 70, 91]
+      }]
     }
   },
   methods: {
@@ -57,17 +54,17 @@ export default {
       }
 
       if (e.channel === 'temp' && e.name === 'add') {
-        let newChart = copy(this.temps)
-
-        newChart.labels.push(json.data.labels[0])
-
-        for (const item of json.data.datasets) {
-          for (let nItem of newChart.datasets) {
-            if (nItem.sensor_id === item.sensor_id) {
-              nItem.data.push(item.data[0])
-            }
-          }
-        }
+        // let newChart = copy(this.temps)
+        //
+        // newChart.labels.push(json.data.labels[0])
+        //
+        // for (const item of json.data.datasets) {
+        //   for (let nItem of newChart.datasets) {
+        //     if (nItem.sensor_id === item.sensor_id) {
+        //       nItem.data.push(item.data[0])
+        //     }
+        //   }
+        // }
 
       }
 
