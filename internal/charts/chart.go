@@ -1,7 +1,7 @@
 package charts
 
 type dataset struct {
-	Label    string    `json:"label"`
+	Label    string    `json:"name"`
 	SensorID uint      `json:"sensor_id"`
 	Data     []float32 `json:"data"`
 }
