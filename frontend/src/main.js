@@ -8,6 +8,17 @@ import './style.scss'
 import PrimeVue from 'primevue/config';
 import App from './App.vue'
 
+//global components
+import SelectButton from 'primevue/selectbutton'
+import ToggleButton from 'primevue/togglebutton'
+import Chart from "vue3-apexcharts";
+
+
 const app = createApp(App)
 app.use(PrimeVue)
+
+app.component('SelectButton', SelectButton)
+app.component('ToggleButton', ToggleButton)
+app.component('Chart', Chart)
+
 app.mount('#app')
