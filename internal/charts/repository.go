@@ -17,19 +17,19 @@ func NewRepository(DB *sqlx.DB) *Repository {
 
 func (r *Repository) getQuery(timeFormat string, timeOffset string, direction string) string {
 	q := `
-SELECT strftime('%s', created_at) AS time,
+SELECT created_at 							     AS time,
        round(AVG(temp), 2)                       AS temp,
        c.name || ' [' || s.name || '] '          AS name,
        sensor_id
 FROM sensors_data
          INNER JOIN sensors s on s.id = sensors_data.sensor_id
          INNER JOIN chips c on c.id = s.chip_id
-WHERE created_at >= datetime('now', 'localtime', '%s')
-GROUP BY time, sensor_id
+WHERE created_at >= datetime('now', '%s')
+GROUP BY strftime('%s', created_at), sensor_id
 ORDER BY time %s
 `
 
-	return fmt.Sprintf(q, timeFormat, timeOffset, direction)
+	return fmt.Sprintf(q, timeOffset, timeFormat, direction)
 }
 
 // BySeconds getting chart for last 1 minute
@@ -42,7 +42,7 @@ func (r *Repository) BySeconds() (*Chart, error) {
 		return nil, err
 	}
 
-	return mapToChart(models, secondLayout), nil
+	return mapToChart(models), nil
 }
 
 // ByMinutes getting chart for last 1 hour
@@ -55,7 +55,7 @@ func (r *Repository) ByMinutes() (*Chart, error) {
 		return nil, err
 	}
 
-	return mapToChart(models, minuteLayout), nil
+	return mapToChart(models), nil
 }
 
 // ByHours getting chart for last 1 day
@@ -68,7 +68,7 @@ func (r *Repository) ByHours() (*Chart, error) {
 		return nil, err
 	}
 
-	return mapToChart(models, hourLayout), nil
+	return mapToChart(models), nil
 }
 
 // ByDays getting chart for last 1 month
@@ -81,7 +81,7 @@ func (r *Repository) ByDays() (*Chart, error) {
 		return nil, err
 	}
 
-	return mapToChart(models, dayLayout), nil
+	return mapToChart(models), nil
 }
 
 // ByMonth getting chart for last 1 year
@@ -94,38 +94,31 @@ func (r *Repository) ByMonth() (*Chart, error) {
 		return nil, err
 	}
 
-	return mapToChart(models, monthLayout), nil
+	return mapToChart(models), nil
 }
 
 func (r *Repository) GetLast(typ string) (*Chart, error) {
 	var models []*Model
 	var offset string
-	var layout string
 
 	switch typ {
 	case TypeSecond:
 		offset = secondOffset
-		layout = secondLayout
 		break
 	case TypeMinute:
 		offset = minuteOffset
-		layout = minuteLayout
 		break
 	case TypeHour:
 		offset = hourOffset
-		layout = hourLayout
 		break
 	case TypeDay:
 		offset = dayOffset
-		layout = dayLayout
 		break
 	case TypeMonth:
 		offset = monthOffset
-		layout = monthLayout
 		break
 	default:
 		offset = secondOffset
-		layout = secondLayout
 	}
 
 	pQuery := r.getQuery("%Y-%m-%d %H:%M:%S", offset, "DESC")
@@ -135,5 +128,5 @@ func (r *Repository) GetLast(typ string) (*Chart, error) {
 		return nil, err
 	}
 
-	return mapToChart(models, layout), nil
+	return mapToChart(models), nil
 }

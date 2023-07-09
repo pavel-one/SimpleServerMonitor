@@ -2,47 +2,42 @@ package charts
 
 import "time"
 
-func mapToChart(models []*Model, timeLayout string) *Chart {
-	mapper := make(map[uint]*dataset)
-	mapperTimes := make(map[time.Time]bool)
-	var labels []string
-	var datasets []*dataset
+func mapToChart(models []*Model) *Chart {
+	chart := &Chart{
+		DateStart: time.Now(),
+		Datasets:  make([]*dataset, 0),
+	}
 
 	for _, m := range models {
-		t, err := time.Parse("2006-01-02 15:04:05", m.Time)
-		if err != nil {
+		i, ok := findDataset(chart.Datasets, m.SensorID)
+
+		if chart.DateStart.Sub(m.Time) > 0 {
+			chart.DateStart = m.Time
+		}
+
+		if !ok {
+			chart.Datasets = append(chart.Datasets, &dataset{
+				Name:     m.Name,
+				SensorID: m.SensorID,
+				Data: [][]any{
+					{m.Time.UnixMilli(), m.Temp},
+				},
+			})
 			continue
 		}
 
-		v, ok := mapper[m.SensorID]
-		if ok {
-			v.Data = append(v.Data, m.Temp)
-		} else {
-			mapper[m.SensorID] = &dataset{
-				Label:    m.Name,
-				SensorID: m.SensorID,
-				Data:     []float32{m.Temp},
-			}
-		}
-
-		_, ok = mapperTimes[t]
-		if !ok {
-			mapperTimes[t] = true
-		}
-	}
-
-	for t := range mapperTimes {
-		labels = append(labels, t.Format(timeLayout))
-	}
-
-	for _, ds := range mapper {
-		datasets = append(datasets, ds)
-	}
-
-	chart := &Chart{
-		Labels:   labels,
-		Datasets: datasets,
+		chart.Datasets[i].Data = append(chart.Datasets[i].Data, []any{m.Time.UnixMilli(), m.Temp})
 	}
 
 	return chart
+}
+
+func findDataset(datasets []*dataset, sensorID uint) (index int, exists bool) {
+	for i, v := range datasets {
+		if v.SensorID == sensorID {
+			return i, true
+		}
+	}
+
+	return 0, false
 }

@@ -1,13 +1,15 @@
 package charts
 
+import "time"
+
 type dataset struct {
-	Label    string    `json:"name"`
-	SensorID uint      `json:"sensor_id"`
-	Data     []float32 `json:"data"`
+	Name     string  `json:"name"`
+	SensorID uint    `json:"sensor_id"`
+	Data     [][]any `json:"data"`
 }
 
 // Chart struct for frontend chart js
 type Chart struct {
-	Labels   []string   `json:"labels"`
-	Datasets []*dataset `json:"datasets"`
+	DateStart time.Time  `json:"date_start"`
+	Datasets  []*dataset `json:"datasets"`
 }

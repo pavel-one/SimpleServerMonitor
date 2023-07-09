@@ -2,12 +2,12 @@
   <div>
     <div class="card flex justify-content-center">
       <select-button v-model="tempSelector.selected" optionValue="value" :options="tempSelector.options"
-                    optionLabel="name"/>
+                     optionLabel="name"/>
     </div>
-    <chart  v-if="temps" width="500" type="line" :options="options" :series="temps"></chart>
+    <chart v-if="temps" width="500" type="area" :options="options" :series="temps"></chart>
     <div class="card flex justify-content-center">
       <toggle-button v-model="update" onLabel="Stop" offLabel="Updating"
-                    onIcon="pi pi-times" offIcon="pi pi-check" class="w-9rem"/>
+                     onIcon="pi pi-times" offIcon="pi pi-check" class="w-9rem"/>
     </div>
   </div>
 </template>
@@ -22,11 +22,39 @@ export default {
       temps: null,
       options: {
         chart: {
-          id: 'vuechart'
+          id: 'area-datetime',
+          type: 'area',
+          height: 350,
+          zoom: {
+            autoScaleYaxis: true
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        markers: {
+          size: 0,
+          style: 'hollow',
         },
         xaxis: {
-          categories: []
-        }
+          type: 'datetime',
+          tickAmount: 6,
+        },
+        tooltip: {
+          x: {
+            format: 'dd MMM yyyy'
+          }
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.45,
+            opacityTo: 0.05,
+            stops: [20, 100, 100, 100]
+          },
+        },
       },
       update: true,
       tempSelector: {
@@ -66,7 +94,6 @@ export default {
           return
         }
 
-        this.options.xaxis.categories = json.data.labels
         this.temps = json.data.datasets
         return
       }
@@ -75,14 +102,9 @@ export default {
         if (!this.update) {
           return
         }
-
-        this.options.xaxis.categories.shift()
-        this.options.xaxis.categories.push(json.data.labels[0])
-
         for (const item of json.data.datasets) {
           for (let nItem of this.temps) {
             if (nItem.sensor_id === item.sensor_id) {
-              nItem.data.shift()
               nItem.data.push(item.data[0])
             }
           }

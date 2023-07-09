@@ -37,10 +37,6 @@ END TRANSACTION;
 }
 
 func checkChart(chart *Chart) error {
-	if len(chart.Labels) != 5 {
-		return fmt.Errorf("Not correct labels, need %d: %d", 5, len(chart.Labels))
-	}
-
 	if len(chart.Datasets) != 2 {
 		return fmt.Errorf("Not correct dataset, need %d: %d", 2, len(chart.Datasets))
 	}

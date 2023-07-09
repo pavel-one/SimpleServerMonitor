@@ -22,6 +22,6 @@ CREATE TABLE IF NOT EXISTS sensors_data
 (
     temp       DECIMAL(3, 2) not null,
     sensor_id  integer       not null,
-    created_at DATE DEFAULT (datetime('now', 'localtime')),
+    created_at DATE DEFAULT (datetime('now')),
     FOREIGN KEY (sensor_id) REFERENCES sensors (id) ON DELETE CASCADE
 );
