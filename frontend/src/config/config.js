@@ -5,11 +5,10 @@ export const appConfig = {
 }
 
 function getWsAddress() {
-    let prefix = "wss://"
-
-    if (window.location.protocol === 'http:') {
-        prefix = "ws://"
+    //TODO: move to env
+    if (window.location.protocol === 'https:') {
+        return "wss://ws.pavel.one"
     }
 
-    return prefix + window.location.hostname + ':5000'
+    return "ws://" + window.location.hostname + ':5000'
 }

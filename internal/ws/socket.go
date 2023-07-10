@@ -45,7 +45,7 @@ func (s *Socket) Run() error {
 
 	s.Logger.Infof("Server running on port %d", s.Port)
 
-	if err := http.ListenAndServe(":"+strconv.Itoa(s.Port), s.Mux); err != nil {
+	if err := http.ListenAndServe("127.0.0.1:"+strconv.Itoa(s.Port), s.Mux); err != nil {
 		return err
 	}
 
