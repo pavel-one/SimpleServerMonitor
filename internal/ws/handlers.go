@@ -66,8 +66,53 @@ func (s *Socket) handleDisconnect(sess *melody.Session) {
 
 func (s *Socket) handleMessage(sess *melody.Session, msg []byte) {
 	s.Logger.Infoln("Message: ", sess.RemoteAddr(), string(msg))
+	e := new(events.Event)
 
-	if err := s.Server.Broadcast([]byte("hi")); err != nil {
-		s.Logger.Infoln("Broadcasting error: ", err)
+	if err := json.Unmarshal(msg, e); err != nil {
+		s.Logger.Errorln("Message is not is event", sess.RemoteAddr(), string(msg))
+		return
+	}
+
+	if e.Channel == events.TempTopic && e.Event == events.LoadTempEvent {
+		typ, ok := e.Data.(string)
+		if !ok {
+			s.Logger.Errorln("Message is not is getting correct data", sess.RemoteAddr(), string(msg))
+			return
+		}
+		rep := charts.NewRepository(s.db)
+
+		var chart *charts.Chart
+		var err error
+		switch typ {
+		case charts.TypeSecond:
+			chart, err = rep.BySeconds()
+		case charts.TypeMinute:
+			chart, err = rep.ByMinutes()
+		case charts.TypeHour:
+			chart, err = rep.ByHours()
+		case charts.TypeDay:
+			chart, err = rep.ByDays()
+		case charts.TypeMonth:
+			chart, err = rep.ByMonth()
+		default:
+			chart, err = rep.BySeconds()
+		}
+
+		if err != nil {
+			s.Logger.Errorln("Failed getting data:", err)
+			return
+		}
+
+		msg := events.NewChart(chart, events.LoadTempEvent)
+		b, err := json.Marshal(msg)
+		if err != nil {
+			s.Logger.Errorln("Failed getting data:", err)
+			return
+		}
+
+		if err := sess.Write(b); err != nil {
+			s.Logger.Errorln("Failed send data:", err)
+			return
+		}
 	}
 }

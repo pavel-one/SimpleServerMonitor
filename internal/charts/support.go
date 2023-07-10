@@ -1,7 +1,10 @@
 package charts
 
-import "time"
+import (
+	"time"
+)
 
+// NOTE: All times return UTC format!
 func mapToChart(models []*Model) *Chart {
 	chart := &Chart{
 		DateStart: time.Now(),
@@ -12,7 +15,7 @@ func mapToChart(models []*Model) *Chart {
 		i, ok := findDataset(chart.Datasets, m.SensorID)
 
 		if chart.DateStart.Sub(m.Time) > 0 {
-			chart.DateStart = m.Time
+			chart.DateStart = m.Time.Local()
 		}
 
 		if !ok {
@@ -20,13 +23,19 @@ func mapToChart(models []*Model) *Chart {
 				Name:     m.Name,
 				SensorID: m.SensorID,
 				Data: [][]any{
-					{m.Time.UnixMilli(), m.Temp},
+					{
+						m.Time.UnixMilli(),
+						m.Temp,
+					},
 				},
 			})
 			continue
 		}
 
-		chart.Datasets[i].Data = append(chart.Datasets[i].Data, []any{m.Time.UnixMilli(), m.Temp})
+		chart.Datasets[i].Data = append(chart.Datasets[i].Data, []any{
+			m.Time.UnixMilli(),
+			m.Temp,
+		})
 	}
 
 	return chart

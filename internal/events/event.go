@@ -2,6 +2,12 @@ package events
 
 import "fmt"
 
+type Event struct {
+	Event   string `json:"event"`
+	Channel string `json:"channel"`
+	Data    any    `json:"data"`
+}
+
 // Interface for event
 type Interface interface {
 	GetEvent() string

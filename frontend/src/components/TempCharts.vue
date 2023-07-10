@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="card flex justify-content-center">
-      <select-button v-model="tempSelector.selected" optionValue="value" :options="tempSelector.options"
+      <select-button @change="change" v-model="tempSelector.selected" optionValue="value" :options="tempSelector.options"
                      optionLabel="name"/>
     </div>
     <chart v-if="temps" width="500" type="area" :options="options" :series="temps"></chart>
@@ -39,6 +39,9 @@ export default {
         xaxis: {
           type: 'datetime',
           tickAmount: 6,
+          labels: {
+            datetimeUTC: false
+          }
         },
         tooltip: {
           x: {
@@ -84,16 +87,21 @@ export default {
       }
     }
   },
+  methods: {
+    change: function () {
+      store.Connection.send(JSON.stringify({
+        event: 'all',
+        channel: 'temp',
+        data: this.tempSelector.selected
+      }))
+    }
+  },
   mounted() {
     store.Connection.onmessage = async event => {
       const json = JSON.parse(event.data)
       const e = helpers.getEvent(json.event)
 
       if (e.channel === 'temp' && e.name === 'all') {
-        if (!this.update) {
-          return
-        }
-
         this.temps = json.data.datasets
         return
       }
