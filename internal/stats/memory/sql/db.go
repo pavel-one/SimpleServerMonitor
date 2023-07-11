@@ -1,13 +1,12 @@
 package sql
 
 import (
-	_ "embed" // embed database schema
+	_ "embed"
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3" // database driver
 )
 
-//go:embed db/schema.sql
+//go:embed memory.sql
 var schema string
 
 // Connect to database
