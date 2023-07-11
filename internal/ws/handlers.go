@@ -3,8 +3,8 @@ package ws
 import (
 	"github.com/goccy/go-json"
 	"github.com/olahol/melody"
-	"github.com/pavel-one/SimpleServerMonitor/internal/charts"
 	"github.com/pavel-one/SimpleServerMonitor/internal/events"
+	"github.com/pavel-one/SimpleServerMonitor/internal/stats/temps/charts"
 	"net/http"
 )
 

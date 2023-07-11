@@ -8,6 +8,7 @@ import (
 	"github.com/pavel-one/SimpleServerMonitor/internal/ws"
 	"io/fs"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -75,6 +76,11 @@ func (a *App) Run() error {
 
 	//http server
 	go func(ch chan<- error) {
+		r := os.Getenv("HTTP_SERVER")
+		if r == "false" {
+			return
+		}
+		log.Infoln("Starting http server on port: 8080")
 		if err := a.Router.Run("127.0.0.1:8080"); err != nil {
 			log.Errorln("Http server is failed:", err)
 			ch <- err

@@ -1,11 +1,11 @@
 package workers
 
 import (
-	"github.com/pavel-one/SimpleServerMonitor/internal/charts"
 	"github.com/pavel-one/SimpleServerMonitor/internal/events"
 	"github.com/pavel-one/SimpleServerMonitor/internal/logger"
-	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
 	"github.com/pavel-one/SimpleServerMonitor/internal/sql"
+	"github.com/pavel-one/SimpleServerMonitor/internal/stats/temps"
+	"github.com/pavel-one/SimpleServerMonitor/internal/stats/temps/charts"
 	"time"
 )
 
@@ -17,13 +17,13 @@ func SensorWorker(period time.Duration, ch events.Chan) error {
 	if err != nil {
 		return err
 	}
-	rep := sensors.NewSensorRepository(db)
+	rep := temps.NewSensorRepository(db)
 	chartRep := charts.NewRepository(db)
 
 	log.Infoln("Run temps pulling")
 
 	for {
-		chips, err := sensors.GetChips()
+		chips, err := temps.GetChips()
 		if err != nil {
 			return err
 		}

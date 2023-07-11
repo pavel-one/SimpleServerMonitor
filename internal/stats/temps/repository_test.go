@@ -1,4 +1,4 @@
-package sensors
+package temps
 
 import (
 	"github.com/pavel-one/SimpleServerMonitor/tests"

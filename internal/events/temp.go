@@ -1,7 +1,7 @@
 package events
 
 import (
-	"github.com/pavel-one/SimpleServerMonitor/internal/sensors"
+	"github.com/pavel-one/SimpleServerMonitor/internal/stats/temps"
 )
 
 type tempData struct {
@@ -17,7 +17,7 @@ type Temp struct {
 }
 
 // NewTempEvent create temp event
-func NewTempEvent(model *sensors.Model) *Temp {
+func NewTempEvent(model *temps.Model) *Temp {
 	data := tempData{
 		ID:   model.ID,
 		Name: model.Name,

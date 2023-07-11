@@ -2,6 +2,9 @@
   <configuration default="false" name="RUN" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="sensors" />
     <working_directory value="$PROJECT_DIR$" />
+    <envs>
+      <env name="HTTP_SERVER" value="false" />
+    </envs>
     <kind value="PACKAGE" />
     <package value="github.com/pavel-one/SimpleServerMonitor" />
     <directory value="$PROJECT_DIR$" />

@@ -1,7 +1,7 @@
 package events
 
 import (
-	"github.com/pavel-one/SimpleServerMonitor/internal/charts"
+	"github.com/pavel-one/SimpleServerMonitor/internal/stats/temps/charts"
 )
 
 // Chart event load all temperature
