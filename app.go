@@ -4,12 +4,10 @@ import (
 	"embed"
 	"github.com/gin-gonic/gin"
 	"github.com/pavel-one/SimpleServerMonitor/internal/events"
-	"github.com/pavel-one/SimpleServerMonitor/internal/workers"
 	"github.com/pavel-one/SimpleServerMonitor/internal/ws"
 	"io/fs"
 	"net/http"
 	"os"
-	"time"
 )
 
 //go:embed frontend/dist/*
@@ -49,27 +47,15 @@ func NewApp() *App {
 
 // Run all application components
 func (a *App) Run() error {
-
-	// sensor worker
-	go func(ch chan<- error) {
-		if err := workers.SensorWorker(time.Second*5, a.EventCh); err != nil {
-			log.Errorln("Sensor worker is failed", err)
-			ch <- err
-		}
-	}(a.ErrorCh)
-
 	// ws server
 	go func(ch chan<- error) {
+		r := os.Getenv("WS_SERVER")
+		if r == "false" {
+			return
+		}
+		log.Infoln("Starting WS server on port: 5000")
 		if err := a.Ws.Run(); err != nil {
 			log.Errorln("Websocket server is failed", err)
-			ch <- err
-		}
-	}(a.ErrorCh)
-
-	// ws worker
-	go func(ch chan<- error) {
-		if err := workers.WebsocketWorker(a.Ws.Server, a.EventCh); err != nil {
-			log.Errorln("Sensor worker is failed", err)
 			ch <- err
 		}
 	}(a.ErrorCh)
