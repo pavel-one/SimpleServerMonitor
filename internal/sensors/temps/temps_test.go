@@ -27,7 +27,7 @@ func TestGetStats(t *testing.T) {
 		},
 		host.TemperatureStat{
 			SensorKey:   "Test1",
-			Temperature: 23.0,
+			Temperature: 22.0,
 			High:        25,
 			Critical:    65,
 		},
@@ -38,8 +38,8 @@ func TestGetStats(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if stats[0].Temp != 24.5 {
-		t.Fatalf("Temp %s != 25: %f", stats[0].Key, stats[0].Temp)
+	if stats[0].Temp != 23.5 {
+		t.Fatalf("Temp %s != 23.5: %f", stats[0].Key, stats[0].Temp)
 	}
 
 	if stats[1].Temp != 22 {
