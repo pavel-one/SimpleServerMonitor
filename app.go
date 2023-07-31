@@ -4,10 +4,12 @@ import (
 	"embed"
 	"github.com/gin-gonic/gin"
 	"github.com/pavel-one/SimpleServerMonitor/internal/events"
+	"github.com/pavel-one/SimpleServerMonitor/internal/sensors/temps"
 	"github.com/pavel-one/SimpleServerMonitor/internal/ws"
 	"io/fs"
 	"net/http"
 	"os"
+	"time"
 )
 
 //go:embed frontend/dist/*
@@ -71,6 +73,11 @@ func (a *App) Run() error {
 			log.Errorln("Http server is failed:", err)
 			ch <- err
 		}
+	}(a.ErrorCh)
+
+	// Temp worker
+	go func(ch chan<- error) {
+		ch <- temps.Worker(time.Second * 5)
 	}(a.ErrorCh)
 
 	return <-a.ErrorCh

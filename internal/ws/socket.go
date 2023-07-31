@@ -3,9 +3,9 @@ package ws
 import (
 	"github.com/jmoiron/sqlx"
 	"github.com/olahol/melody"
+	"github.com/pavel-one/SimpleServerMonitor/internal/db"
 	"github.com/pavel-one/SimpleServerMonitor/internal/events"
 	"github.com/pavel-one/SimpleServerMonitor/internal/logger"
-	"github.com/pavel-one/SimpleServerMonitor/internal/sql"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
@@ -37,11 +37,11 @@ func NewServer(port int, serverName string, ch events.Chan) *Socket {
 
 // Run socket server
 func (s *Socket) Run() error {
-	db, err := sql.Connect("db")
+	d, err := db.DefaultConnection()
 	if err != nil {
 		return err
 	}
-	s.db = db
+	s.db = d
 
 	s.Logger.Infof("Server running on port %d", s.Port)
 

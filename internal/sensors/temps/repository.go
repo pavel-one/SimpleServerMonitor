@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/pavel-one/SimpleServerMonitor/internal/db"
+	"time"
 )
 
 var schema = `
@@ -14,6 +15,12 @@ CREATE TABLE IF NOT EXISTS Temps
     time 	TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 `
+
+type Model struct {
+	ID   string    `db:"id"`
+	Temp float64   `db:"temp"`
+	time time.Time `db:"time"`
+}
 
 type StatRepository struct {
 	DB *sqlx.DB
@@ -33,5 +40,12 @@ func NewStatRepository() (*StatRepository, error) {
 }
 
 func (r *StatRepository) Save(stat *Stat) error {
+	q := `INSERT INTO Temps (id, temp) VALUES (:id, :temp)`
 
+	_, err := r.DB.NamedExec(q, stat)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
