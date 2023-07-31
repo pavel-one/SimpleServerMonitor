@@ -3,6 +3,7 @@ package temps
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"github.com/pavel-one/SimpleServerMonitor/internal/charts"
 	"github.com/pavel-one/SimpleServerMonitor/internal/db"
 	"time"
 )
@@ -10,23 +11,23 @@ import (
 var schema = `
 CREATE TABLE IF NOT EXISTS Temps
 (
-    id		VARCHAR NOT NULL PRIMARY KEY,
+    key     VARCHAR NOT NULL,
     temp 	INTEGER NOT NULL,
     time 	TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 `
 
 type Model struct {
-	ID   string    `db:"id"`
+	Key  string    `db:"key"`
 	Temp float64   `db:"temp"`
-	time time.Time `db:"time"`
+	Time time.Time `db:"time"`
 }
 
-type StatRepository struct {
+type Repository struct {
 	DB *sqlx.DB
 }
 
-func NewStatRepository() (*StatRepository, error) {
+func NewRepository() (*Repository, error) {
 	connection, err := db.DefaultConnection()
 	if err != nil {
 		return nil, err
@@ -36,11 +37,11 @@ func NewStatRepository() (*StatRepository, error) {
 		return nil, fmt.Errorf("error create schema: %s", err)
 	}
 
-	return &StatRepository{DB: connection}, nil
+	return &Repository{DB: connection}, nil
 }
 
-func (r *StatRepository) Save(stat *Stat) error {
-	q := `INSERT INTO Temps (id, temp) VALUES (:id, :temp)`
+func (r *Repository) Save(stat *Stat) error {
+	q := `INSERT INTO Temps (key, temp) VALUES (:key, :temp)`
 
 	_, err := r.DB.NamedExec(q, stat)
 	if err != nil {
@@ -48,4 +49,91 @@ func (r *StatRepository) Save(stat *Stat) error {
 	}
 
 	return nil
+}
+
+func (r *Repository) GetBySeconds() ([]charts.Data, error) {
+	var models []Model
+
+	q := `
+SELECT key, temp, time
+FROM Temps
+WHERE time BETWEEN datetime('now', '-1 minute') AND datetime('now')
+ORDER BY time DESC
+`
+
+	if err := r.DB.Select(&models, q); err != nil {
+		return nil, err
+	}
+
+	return modelsToChart(models), nil
+}
+
+func (r *Repository) GetByMinutes() ([]charts.Data, error) {
+	var models []Model
+
+	q := `
+SELECT key, temp, time
+FROM Temps
+WHERE time BETWEEN datetime('now', '-1 hour') AND datetime('now')
+ORDER BY time DESC
+`
+
+	if err := r.DB.Select(&models, q); err != nil {
+		return nil, err
+	}
+
+	return modelsToChart(models), nil
+}
+
+func (r *Repository) GetByHours() ([]charts.Data, error) {
+	var models []Model
+
+	q := `
+SELECT key, temp, time
+FROM Temps
+WHERE time BETWEEN datetime('now', '-1 day') AND datetime('now')
+ORDER BY time DESC
+`
+
+	if err := r.DB.Select(&models, q); err != nil {
+		return nil, err
+	}
+
+	return modelsToChart(models), nil
+}
+
+func (r *Repository) GetByDays() ([]charts.Data, error) {
+	var models []Model
+
+	q := `
+SELECT key, avg(temp) as temp, time
+FROM Temps
+WHERE time BETWEEN datetime('now', '-1 month') AND datetime('now')
+GROUP BY strftime('%Y-%m-%d %H:00:00', time), key
+ORDER BY time DESC
+`
+
+	if err := r.DB.Select(&models, q); err != nil {
+		return nil, err
+	}
+
+	return modelsToChart(models), nil
+}
+
+func (r *Repository) GetByMonth() ([]charts.Data, error) {
+	var models []Model
+
+	q := `
+SELECT key, avg(temp) as temp, time
+FROM Temps
+WHERE time BETWEEN datetime('now', '-1 year') AND datetime('now')
+GROUP BY strftime('%Y-%m-%d', time), key
+ORDER BY time DESC
+`
+
+	if err := r.DB.Select(&models, q); err != nil {
+		return nil, err
+	}
+
+	return modelsToChart(models), nil
 }

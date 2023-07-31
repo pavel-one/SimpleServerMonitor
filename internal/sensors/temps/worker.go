@@ -3,7 +3,7 @@ package temps
 import "time"
 
 func Worker(t time.Duration) error {
-	rep, err := NewStatRepository()
+	rep, err := NewRepository()
 	if err != nil {
 		return err
 	}
