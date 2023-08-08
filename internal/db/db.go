@@ -2,7 +2,7 @@ package db
 
 import (
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 func DefaultConnection() (*sqlx.DB, error) {
@@ -10,7 +10,7 @@ func DefaultConnection() (*sqlx.DB, error) {
 }
 
 func Connect(dbname string) (*sqlx.DB, error) {
-	conn, err := sqlx.Connect("sqlite3", dbname+".sqlite3")
+	conn, err := sqlx.Connect("sqlite", dbname+".sqlite3")
 	if err != nil {
 		return nil, err
 	}

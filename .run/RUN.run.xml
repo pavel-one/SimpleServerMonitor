@@ -4,6 +4,7 @@
     <working_directory value="$PROJECT_DIR$" />
     <envs>
       <env name="HTTP_SERVER" value="false" />
+      <env name="CGO_ENABLED" value="0" />
     </envs>
     <kind value="PACKAGE" />
     <package value="github.com/pavel-one/SimpleServerMonitor" />
