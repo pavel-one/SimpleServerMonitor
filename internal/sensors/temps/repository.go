@@ -2,7 +2,7 @@ package temps
 
 import (
 	"fmt"
-	"github.com/jmoiron/sqlx"
+	"github.com/pavel-one/SimpleServerMonitor/internal/base"
 	"github.com/pavel-one/SimpleServerMonitor/internal/charts"
 	"github.com/pavel-one/SimpleServerMonitor/internal/db"
 	"time"
@@ -23,9 +23,7 @@ type Model struct {
 	Time time.Time `db:"time"`
 }
 
-type Repository struct {
-	DB *sqlx.DB
-}
+type Repository base.Repository
 
 func NewRepository() (*Repository, error) {
 	connection, err := db.DefaultConnection()
